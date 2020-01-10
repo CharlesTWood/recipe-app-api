@@ -29,7 +29,7 @@ class PublicIngredientsApiTests(TestCase):
 class PrivateIngredientsApiTest(TestCase):
     """Test the privately available ingredients API"""
 
-    def setUP(self):
+    def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
             'test@example.com',
@@ -48,7 +48,7 @@ class PrivateIngredientsApiTest(TestCase):
         ingredients = Ingredient.objects.all().order_by('-name')
         serializer = IngredientSerializer(ingredients, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEquel(res.data, serializer.data)
+        self.assertEqual(res.data, serializer.data)
 
     def test_ingredients_limited_to_user(self):
         """Test that only ingredients for authenticated user are returned"""
@@ -63,7 +63,7 @@ class PrivateIngredientsApiTest(TestCase):
         res = self.client.get(INGREDIENTS_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertequal(len(res.data), 1)
+        self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['name'], ingredient.name)
 
     def test_create_ingredient_successful(self):
@@ -83,8 +83,6 @@ class PrivateIngredientsApiTest(TestCase):
         """Test creating invalid ingredient fails"""
 
         payload = {'name': ''}
-        self.client.post(INGREDIENTS_URL, payload)
-
         res = self.client.post(INGREDIENTS_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
@@ -134,3 +132,11 @@ class PrivateIngredientsApiTest(TestCase):
         res = self.client.get(INGREDIENTS_URL, {'assigned_only': 1})
 
         self.assertEqual(len(res.data), 1)
+
+    def test_create_ingredient(self):
+        """Test creating a basic ingredient successful"""
+        payload = {'name': 'Bread', 'link': 'http://test.com/Bread'}
+
+        res = self.client.post(INGREDIENTS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)

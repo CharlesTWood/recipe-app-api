@@ -13,11 +13,11 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    """Serialier for ingredient objects"""
+    """Serializer for ingredient objects"""
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'link')
         read_only_fields = ('id',)
 
 
@@ -55,4 +55,3 @@ class RecipeImageSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'image')
         read_only_fields = ('id',)
-
